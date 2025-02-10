@@ -129,7 +129,7 @@ void CustomCommands::weatherCommand(const string &city)
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback); // Specify WriteCallback to handle the incoming response data
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer); // Tells CURL to store the response data in the readBuffer
 
-        // Performs the HTTP request to the OpenWeatherMap API and stores the response in res
+        // Performs the HTTP request to the OpenWeatherMap API and stores the response code in res
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK)

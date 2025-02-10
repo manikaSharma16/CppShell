@@ -180,21 +180,27 @@ void Shell::executeCommand(const string &input)
         return;
     }
 
-    // Split the input command into tokens (e.g., command and its arguments)
-    std::vector<std::string> tokens;
-    std::istringstream iss(input);
-    std::string token;
+    // Handle other external commands that are not defined in the shell like date, top, pwd, etc
+
+    // Split the input command into tokens (e.g., command and its arguments): "ls -l -a", the tokens vector will contain ["ls", "-l", "-a"].
+    vector<string> tokens; // vector of strings token
+    istringstream iss(input); // convert input string into stream
+    string token;
+
+    // Add each token in input to the vector tokens
     while (iss >> token)
     {
-        tokens.push_back(token); // Add each token to the vector
+        tokens.push_back(token);
     }
 
     // Convert the tokens into a char array for execvp
-    char *args[MAX_CMD_LINE / 2 + 1];
+    char *args[MAX_CMD_LINE / 2 + 1]; // To estimate the number of arguments that can fit into the args array and ensure null fits for execvp
     int argc = tokens.size();
+
+    // Convert string vector tokens to char* args
     for (int i = 0; i < argc; i++)
     {
-        args[i] = strdup(tokens[i].c_str()); // Convert string to char*
+        args[i] = strdup(tokens[i].c_str());
     }
     args[argc] = NULL; // Null-terminate the argument array
 
@@ -202,7 +208,7 @@ void Shell::executeCommand(const string &input)
     pid_t pid = fork();
     if (pid < 0)
     {
-        std::cerr << "Fork failed.\n"; // Handle fork failure
+        cerr << "Fork failed.\n"; // Handle fork failure
         exit(EXIT_FAILURE);            // Exit on error
     }
     else if (pid == 0)
@@ -210,7 +216,7 @@ void Shell::executeCommand(const string &input)
         // Child process executes the command
         if (execvp(args[0], args) == -1)
         {
-            std::cerr << "Error executing command: " << strerror(errno) << std::endl;
+            cerr << "Error executing command: " << strerror(errno) << endl;
             exit(EXIT_FAILURE); // Exit with failure if execvp fails
         }
     }
